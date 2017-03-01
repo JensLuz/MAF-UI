@@ -1,0 +1,20 @@
+{
+	"identifier": "com.telenet.app.UI",
+	"name": "UI Demo",
+	"version": "0.0.1",
+	"author": "Jens Luz",
+	"company": "Telenet",
+	"copyright": "Telenet 2016",
+	"description": "UI Elements",
+	"categories": [
+		"featured",
+		"lifestyle"
+	],
+	"scripts": "Javascript/init.js",
+	"images": {
+		"about": "Images/Icon.png",
+		"icon": {
+			"160x160": "Images/icon_shop.png"
+		}
+	}
+}
