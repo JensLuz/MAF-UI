@@ -238,15 +238,14 @@ var MainView = new MAF.Class({
 			missingSrc: 'Images/telenet_logo.png'
 		}).appendTo(topContainer);
 		
-		/* var promoText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis \
+		var promoText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis \
 				vitae sagittis dui. Mauris aliquam ultrices libero, et accumsan est \
 				efficitur eu. Vivamus consectetur, ipsum vitae laoreet varius, nisl \
 				augue elementum nibh, ut pulvinar nisi mauris a ex. Fusce erat orci, \
 				luctus et egestas quis, fringilla quis magna. Nulla facilisi. Nulla \
 				scelerisque iaculis sapien, sed tincidunt lectus laoreet vitae. Nullam \
 				sit amet risus tristique, pulvinar elit eu, condimentum lorem. Proin \
-				pellentesque est in vestibulum ornare."; */
-		var promoText = "Promotext here";
+				pellentesque est in vestibulum ornare.";
 				
 		//Beschikbaar in Play More
 		var topLabel = new MAF.element.Text({
@@ -255,6 +254,8 @@ var MainView = new MAF.Class({
 				color: "white",
 				fontSize: 25,
 				//backgroundColor: 'black',
+				trucanion: 'end',
+				wrap: true,
 				width: 700,
 				height: 400,
 				hOffset: 1000,
