@@ -2,95 +2,61 @@ var MainView = new MAF.Class({
 	ClassName: 'MainView',
 
 	Extends: MAF.system.FullscreenView,
-
-	initialize: function () {
-		var view = this;
-		view.parent(); // Call the super class, in this case the FullscreenView
-		view.setStyle('backgroundColor', 'rgba(0, 0, 0, 0.8)');
-		var counter = 0;
-		view.animating = false;
-	},
+	animating: false,
 
 	createView: function () {
 		var view = this;
 		var focusBool = false;
 
+		this.setStyles({backgroundColor: 'rgba(0, 0, 0, 0.8)'});
 		//set containers
-		var  mainContainer = new MAF.element.Container({
-			styles: {
-				width: 1920,
-				height: 1080
-				}
-		}).appendTo(view);
-
-		var  bigContainer = new MAF.element.Container({
-			styles: {
-				width: 1920,
-				height: 3080
-				}
-		}).appendTo(mainContainer);
-		
-		//top container
-		var  topContainer = this.elements.topContainer = new MAF.element.Container({
+		var  mainContainer = view.elements.mainContainer = new MAF.element.Container({
 			styles: {
 				width: 1920,
 				height: 1080,
 				vOffset: 0
 				}
-		}).appendTo(bigContainer);
-		//middle container
-		var  middleContainer = this.elements.middleContainer = new MAF.element.Container({
+		}).appendTo(view);
+
+		var  bigContainer = view.elements.bigContainer = new MAF.element.Container({
+			styles: {
+				width: 1920,
+				height: 3080,
+				vOffset: 0
+				}
+		}).appendTo(mainContainer);
+		
+		//top container
+		var  topContainer = view.elements.topContainer = new MAF.element.Container({
 			styles: {
 				width: 1920,
 				height: 1080,
-				vOffset: 1000
+				vOffset: 0,
+				backgroundImage: "Images/wallpaper1.jpg"
+				}
+		}).appendTo(bigContainer);
+		//middle container
+		var  middleContainer = view.elements.middleContainer = new MAF.element.Container({
+			styles: {
+				width: 1920,
+				height: 1080,
+				vOffset: 1000,
+				backgroundImage: "Images/wallpaper2.jpg"
 				}
 		}).appendTo(bigContainer);
 		//bottom container
-		var  bottomContainer = this.elements.bottomContainer = new MAF.element.Container({
+		var  bottomContainer = view.elements.bottomContainer = new MAF.element.Container({
 			styles: {
 				width: 1920,
 				height: 1080,
-				vOffset: 2000
+				vOffset: 2000,
+				backgroundImage: "Images/wallpaper3.jpg"
 				}
 		}).appendTo(bigContainer);
 		
-		//set background images
-		var  topWallpaper = new MAF.element.Image({
-			styles: {
-				width: 1920,
-				height: 1080
-			}
-		});
-		topWallpaper.setSources({
-			src: 'Images/wallpaper1.jpg',
-			missingSrc: 'Images/telenet_logo.png'
-		}).appendTo(topContainer);
-		
-		var  middleWallpaper = new MAF.element.Image({
-			styles: {
-				width: 1920,
-				height: 1080
-			}
-		});
-		middleWallpaper.setSources({
-			src: 'Images/wallpaper2.jpg',
-			missingSrc: 'Images/telenet_logo.png'
-		}).appendTo(middleContainer);
-		
-		var  bottomWallpaper = new MAF.element.Image({
-			styles: {
-				width: 1920,
-				height: 1080
-			}
-		});
-		bottomWallpaper.setSources({
-			src: 'Images/wallpaper3.jpg',
-			missingSrc: 'Images/telenet_logo.png'
-		}).appendTo(bottomContainer);
-		
+				
 		//top subscribe button
-		var topButton = new MAF.control.TextButton({
+		var topButton = view.elements.topButton = new MAF.control.TextButton({
 			label: $_('Subscribe'),
 			styles: {
 				width: 250,
@@ -111,17 +77,12 @@ var MainView = new MAF.Class({
 					console.log("Top selected");
 				},
 				onNavigate: function (event) {
-					event.stop();
+
 					//when the user scrolls down
-					switch(event.payload.direction) {
-						case 'right':
-							console.log("SUBSCRIBE Right pressed");
-							topButton2.focus();
-							break;
-						case 'down':
+					if (event.payload.direction === 'down') {
 							console.log("SUBSCRIBE Down pressed");
 							view.moveContainers(event.payload.direction, middleButton);
-							break;
+							event.stop();
 					}
 				}
 			}
@@ -145,18 +106,14 @@ var MainView = new MAF.Class({
 
 				},
 				onNavigate: function (event) {
-					event.stop();
+	
 					//when the user scrolls down
-					switch(event.payload.direction) {
-						case 'left':
-							console.log("SUBSCRIBE Left pressed");
-							topButton.focus();
-							break;
-						case 'down':
-							console.log("SUBSCRIBE Down pressed");
+					if (event.payload.direction === 'down') {
+							console.log("DAYPASS Down pressed");
 							view.moveContainers(event.payload.direction, middleButton);
-							break;
+							event.stop();
 					}
+					
 				}
 			}
 		}).appendTo(topContainer);
@@ -169,7 +126,7 @@ var MainView = new MAF.Class({
 				height: 100,
 				backgroundColor: 'black',
 				hOffset: 1000,
-				vOffset: 500
+				vOffset: 200
 			},
 			textStyles: {
 				anchorStyle: 'center'
@@ -177,7 +134,6 @@ var MainView = new MAF.Class({
 			events: {
 				onFocus: function () {
 					console.log("Animate middle");
-
 				},
 				onNavigate: function (event) {
 					event.stop();
@@ -196,14 +152,14 @@ var MainView = new MAF.Class({
 		}).appendTo(middleContainer);
 		
 		//bottom button
-		var bottomButton = new MAF.control.TextButton({
+		var bottomButton = view.elements.bottomButton = new MAF.control.TextButton({
 			label: $_('Bottom'),
 			styles: {
 				width: 250,
 				height: 100,
 				backgroundColor: 'black',
-				hOffset: 1000,
-				vOffset: 500
+				hOffset: 50,
+				vOffset: 350
 			},
 			textStyles: {
 				anchorStyle: 'center'
@@ -214,38 +170,38 @@ var MainView = new MAF.Class({
 
 				},
 				onNavigate: function (event) {
-					event.stop();
 					//when the user scrolls up
 					if (event.payload.direction === 'up') {
 						console.log("BOTTOMBUTTON UP pressed");
 						view.moveContainers(event.payload.direction, middleButton);
-					}
+						event.stop();
+					} 			 
 			}}
 		}).appendTo(bottomContainer);
 		
-		
+		//PLAY promo video image
+		var  img_playvideo = new MAF.element.Image({
+			src: 'Images/play_video.png',
+			missingSrc: 'Images/telenet_logo.png',
+			styles: {
+				vOffset: 400,
+				hOffset: 400,
+				//width: 500
+			}
+		}).appendTo(topContainer);
+
 		//PLAY MORE logo
 		var  img_playmore = new MAF.element.Image({
+			src: 'Images/play_more.png',
+			missingSrc: 'Images/telenet_logo.png',
 			styles: {
 				vOffset: 100,
 				hOffset: 1000,
 				width: 500
 			}
-		}).appendTo(view);
-		
-		img_playmore.setSources({
-			src: 'Images/play_more.png',
-			missingSrc: 'Images/telenet_logo.png'
 		}).appendTo(topContainer);
 		
-		var promoText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis \
-				vitae sagittis dui. Mauris aliquam ultrices libero, et accumsan est \
-				efficitur eu. Vivamus consectetur, ipsum vitae laoreet varius, nisl \
-				augue elementum nibh, ut pulvinar nisi mauris a ex. Fusce erat orci, \
-				luctus et egestas quis, fringilla quis magna. Nulla facilisi. Nulla \
-				scelerisque iaculis sapien, sed tincidunt lectus laoreet vitae. Nullam \
-				sit amet risus tristique, pulvinar elit eu, condimentum lorem. Proin \
-				pellentesque est in vestibulum ornare.";
+		var promoText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae sagittis dui. Mauris aliquam ultrices libero, et accumsan est efficitur eu. Vivamus consectetur, ipsum vitae laoreet varius, nisl augue elementum nibh, ut pulvinar nisi mauris a ex. Fusce erat orci, luctus et egestas quis, fringilla quis magna. Nulla facilisi. Nulla scelerisque iaculis sapien, sed tincidunt lectus laoreet vitae. Nullam sit amet risus tristique, pulvinar elit eu, condimentum lorem. Proin pellentesque est in vestibulum ornare.";
 				
 		//Beschikbaar in Play More
 		var topLabel = new MAF.element.Text({
@@ -296,43 +252,131 @@ var MainView = new MAF.Class({
 		'http://cache2.allpostersimages.com/p/LRG/97/9771/PFPZ500Z/posters/bojack-horseman-hollywood-poolside.jpg'
 		];
 		
+		this.elements.slider1 = view.createCarousel(400,350,bottomContainer);
+		this.elements.slider1.customNavigate = function(event) {
+				switch (event.payload.direction) {
+					case "up" : view.moveContainers(event.payload.direction, middleButton);
+					break;
+				}
+		};
+		this.elements.slider2 = view.createCarousel(400,540,bottomContainer);
+		
+		this.elements.slider1.changeDataset(
+		imageSources1.map( function( e ) { return {title: e};}),true);
+		
+		this.elements.slider2.changeDataset(
+		imageSources2.map( function( e ) { return {title: e};}),true);
+		
 	},
 
 	moveContainers: function(direction, focusItem) {
 		var view = this,
 			moveSize = 1000;
-		console.log('MOVE: ', direction)
+		console.log('MOVE: ', direction);
 		if (!view.animating) {
 			view.animating = true;
 			switch(direction) {
 				case 'up':
 				case 'down':
-					view.elements.topContainer.animate({
+					view.elements.bigContainer.animate({
 							duration: 0.3,
-							vOffset: direction === 'up' ? (view.elements.topContainer.vOffset + moveSize) : (view.elements.topContainer.vOffset - moveSize),
+							vOffset: direction === 'up' ? (view.elements.bigContainer.vOffset + moveSize) : (view.elements.bigContainer.vOffset - moveSize),
 							events: {
-								onAnimationEnded: function() {
+								onAnimationEnded: function(ani) {
 									focusItem.focus();
 									view.animating = false;
+									ani.reset();
 								}
 							}
-					});
-					view.elements.middleContainer.animate({
-							duration: 0.3,
-							vOffset: direction === 'up' ? (view.elements.middleContainer.vOffset + moveSize) : (view.elements.middleContainer.vOffset - moveSize)
-					});
-					view.elements.bottomContainer.animate({
-							duration: 0.3,
-							vOffset: direction === 'up' ? (view.elements.bottomContainer.vOffset + moveSize) : (view.elements.bottomContainer.vOffset - moveSize)
 					});
 					break;
 			}
 		}
 	},
+	
+	// Creates the Carousel and returns it as var
+	createCarousel: function(posx,posy,container) {
+			
+		var slider = new MAF.element.SlideCarousel({
+			visibleCells: 8,
+			focusIndex: 1,
+			slideDuration: 0.2,
+			styles:{
+				width: 1000,
+				height: 175,
+				hOffset: posx,
+				vOffset: posy
+			},
+			cellCreator: function () {
+				var cell = new MAF.element.SlideCarouselCell({
+					styles: {
+						//this.getCellDimensions(),
+						width: 90,
+						height: 100,
+					},
+					events: {
+						onFocus: function () {
+							this.title.animate({
+								//transform: 'translate3d(+1500px, 0px, 0px)',
+								duration: 0.2,
+								//backgroundColor: 'white'
+								backgroundColor: Theme.getStyles('BaseFocus', 'backgroundColor')
+							});
+						},
+						onBlur: function(){
+							this.title.animate({
+								duration: 0.2,
+								backgroundColor: 'black'
+							});
+						},
+						onSelect: function(){
 
+						}
+					}
+				});
+				
+				cell.title = new MAF.element.Image({
+					hideWhileLoading: true,
+					manageWaitIndicator: true,
+					//aspect: "auto",
+						styles: {
+							width: 125,
+							height: 175,
+							backgroundColor: 'black',
+							paddingTop: 7,
+							paddingLeft: 7,
+							paddingRight: 7,
+							paddingBottom: 7
+						}
+				}).appendTo(cell);
+				return cell;
+			},
+				cellUpdater: function(cell, data){
+					cell.title.setSource(data.title);
+				},
+			events: {
+				onDatasetChanged: function(){
+					//this.getCurrentCell().focus();
+					this.animate({
+						opacity: 1,
+						duration: 0.2
+					});
+				},
+				onNavigate: function(event) {this.customNavigate && this.customNavigate(event);}
+			}
+		}).appendTo(container);
+		return slider;
+	},
+		
 	// After the update view the focus view is called
 	focusView: function () {
 		var view = this;
+	},
+
+	updateView: function() {
+		var view = this;
+		
+		view.elements.topButton.focus();
 	},
 
 	destroyView: function() {
