@@ -367,11 +367,6 @@ var MainView = new MAF.Class({
 		}).appendTo(container);
 		return slider;
 	},
-		
-	// After the update view the focus view is called
-	focusView: function () {
-		var view = this;
-	},
 
 	updateView: function() {
 		var view = this;
