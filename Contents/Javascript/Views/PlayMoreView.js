@@ -1,5 +1,5 @@
-var MainView = new MAF.Class({
-	ClassName: 'MainView',
+var PlayMoreView = new MAF.Class({
+	ClassName: 'PlayMoreView',
 
 	Extends: MAF.system.FullscreenView,
 	animating: false,
@@ -17,6 +17,15 @@ var MainView = new MAF.Class({
 				vOffset: 0
 				}
 		}).appendTo(view);
+		
+		var  headerContainer = view.elements.mainContainer = new MAF.element.Container({
+			styles: {
+				width: 1920,
+				height: 80,
+				vOffset: 0,
+				backgroundColor: 'rgba(0,0,0, 0.3)'
+				}
+			}).appendTo(view);
 
 		var  bigContainer = view.elements.bigContainer = new MAF.element.Container({
 			styles: {
@@ -32,7 +41,7 @@ var MainView = new MAF.Class({
 				width: 1920,
 				height: 1080,
 				vOffset: 0,
-				backgroundImage: "Images/wallpaper1.jpg"
+				backgroundImage: "Images/PlayMore/playmore_bg1.jpg"
 				}
 		}).appendTo(bigContainer);
 		//middle container
@@ -41,7 +50,7 @@ var MainView = new MAF.Class({
 				width: 1920,
 				height: 1080,
 				vOffset: 1000,
-				backgroundImage: "Images/wallpaper2.jpg"
+				backgroundImage: "Images/PlayMore/playmore_bg2.jpg"
 				}
 		}).appendTo(bigContainer);
 		//bottom container
@@ -50,20 +59,40 @@ var MainView = new MAF.Class({
 				width: 1920,
 				height: 1080,
 				vOffset: 2000,
-				backgroundImage: "Images/wallpaper3.jpg"
+				backgroundImage: "Images/PlayMore/playmore_bg3.jpg"
 				}
 		}).appendTo(bigContainer);
+
+				
+		var buttonContainer = view.elements.buttonContainer = new MAF.element.Container({
+			styles: {
+				width: 810,
+				height: 90,
+				vOffset: 820,
+				hOffset: 980,
+				//backgroundColor: 'black'
+				}
+		}).appendTo(topContainer);
 		
+		var backButton = new MAF.control.BackButton({
+			label: $_('BACK'),
+			styles: {
+				vOffset: 90,
+				paddingLeft: 30,
+				width: 180
+			}
+		}).appendTo(topContainer);
 				
 		//top subscribe button
 		var topButton = view.elements.topButton = new MAF.control.TextButton({
-			label: $_('Subscribe'),
+			label: $_('Abonneer'),
 			styles: {
 				width: 250,
-				height: 100,
+				height: 85,
 				backgroundColor: 'black',
-				hOffset: 1000,
-				vOffset: 700
+				fontSize: 32,
+				hOffset: 0,
+				vOffset: 0
 			},
 			textStyles: {
 				anchorStyle: 'center'
@@ -86,17 +115,18 @@ var MainView = new MAF.Class({
 					}
 				}
 			}
-		}).appendTo(topContainer);
+		}).appendTo(buttonContainer);
 		
 		//top daypass button
 		var topButton2 = new MAF.control.TextButton({
-			label: $_('Daypass'),
+			label: $_('Dagpas'),
 			styles: {
 				width: 250,
-				height: 100,
+				height: 85,
 				backgroundColor: 'black',
-				hOffset: 1300,
-				vOffset: 700
+				fontSize: 32,
+				hOffset: 280,
+				vOffset: 0
 			},
 			textStyles: {
 				anchorStyle: 'center'
@@ -116,7 +146,38 @@ var MainView = new MAF.Class({
 					
 				}
 			}
-		}).appendTo(topContainer);
+		}).appendTo(buttonContainer);
+		
+		//top voorwaarden button
+		var topButton3 = new MAF.control.TextButton({
+			label: $_('Voorwaarden'),
+			styles: {
+				width: 250,
+				height: 85,
+				backgroundColor: 'black',
+				fontSize: 32,
+				hOffset: 560,
+				vOffset: 0
+			},
+			textStyles: {
+				anchorStyle: 'center'
+			},
+			events: {
+				onFocus: function () {
+
+				},
+				onNavigate: function (event) {
+	
+					//when the user scrolls down
+					if (event.payload.direction === 'down') {
+							console.log("Rules Down pressed");
+							view.moveContainers(event.payload.direction, middleButton);
+							event.stop();
+					}
+					
+				}
+			}
+		}).appendTo(buttonContainer);	
 		
 		//middle button
 		var middleButton = new MAF.control.TextButton({
@@ -192,35 +253,106 @@ var MainView = new MAF.Class({
 
 		//PLAY MORE logo
 		var  img_playmore = new MAF.element.Image({
-			src: 'Images/play_more.png',
+			src: 'Images/PlayMore/PLAYMORE_logo.png',
 			missingSrc: 'Images/telenet_logo.png',
 			styles: {
-				vOffset: 100,
-				hOffset: 1000,
+				vOffset: 160,
+				hOffset: 960,
 				width: 500
 			}
 		}).appendTo(topContainer);
 		
-		var promoText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae sagittis dui. Mauris aliquam ultrices libero, et accumsan est efficitur eu. Vivamus consectetur, ipsum vitae laoreet varius, nisl augue elementum nibh, ut pulvinar nisi mauris a ex. Fusce erat orci, luctus et egestas quis, fringilla quis magna. Nulla facilisi. Nulla scelerisque iaculis sapien, sed tincidunt lectus laoreet vitae. Nullam sit amet risus tristique, pulvinar elit eu, condimentum lorem. Proin pellentesque est in vestibulum ornare.";
-				
+		var promoText1 = "De beste films en nieuwst series voor slechts € 24.95 per maand";
+		var promoText2 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis vitae sagittis dui. Mauris aliquam ultrices libero, et accumsan est efficitur eu. Vivamus consectetur, ipsum vitae laoreet varius, nisl augue elementum nibh, ut pulvinar nisi mauris a ex. Fusce erat orci, luctus et egestas quis, fringilla quis magna. Nulla facilisi.";
+					
 		//Beschikbaar in Play More
-		var topLabel = new MAF.element.Text({
-			label: $_(promoText),
+		var promoLabelBig = new MAF.element.Text({
+			label: $_(promoText1),
 			styles: {
 				color: "white",
-				fontSize: 25,
+				fontSize: 55,
 				//backgroundColor: 'black',
 				trucanion: 'end',
 				wrap: true,
 				width: 700,
 				height: 400,
-				hOffset: 1000,
+				hOffset: 980,
 				vOffset: 300
 			},
 			textStyles: {
 				anchorStyle: 'center'
 			}
 		}).appendTo(topContainer);
+		//Beschikbaar in Play More
+		var topLabel = new MAF.element.Text({
+			label: $_(promoText2),
+			styles: {
+				color: "white",
+				fontSize: 30,
+				//backgroundColor: 'black',
+				trucanion: 'end',
+				wrap: true,
+				width: 800,
+				height: 400,
+				hOffset: 980,
+				vOffset: 550
+			},
+			textStyles: {
+				anchorStyle: 'center'
+			}
+		}).appendTo(topContainer);
+		
+		//Header app name
+		var playmoreLabel = new MAF.element.Text({
+			label: $_("PLAY MORE"),
+			styles: {
+				color: 'rgba(250,250,250, 0.5)',
+				//color: 'white',
+				fontSize: 35,
+				//backgroundColor: 'black',
+				trucanion: 'end',
+				wrap: true,
+				width: 200,
+				height: 40,
+				hOffset: 50,
+				vOffset: 18
+			},
+			textStyles: {
+				anchorStyle: 'center'
+			}
+		}).appendTo(headerContainer);
+		
+			//Real-time clock
+			var time = moment().format('HH:mm');
+			var clockLabel = new MAF.element.Text({
+            ClassName: 'Clock',
+            data: time,
+			styles: {
+					color: 'rgba(250,250,250, 0.5)',
+					//color: 'white',
+					fontSize: 35,
+					//backgroundColor: 'black',
+					trucanion: 'end',
+					wrap: true,
+					width: 200,
+					height: 40,
+					hOffset: 1750,
+					vOffset: 18
+					},
+				textStyles: {
+					anchorStyle: 'center'
+				}
+			});
+
+			this.timer = new Timer(1, function () {
+            var now = moment().format('HH:mm');
+            if (now !== time) {
+                clockLabel.setText(now);
+            }
+			});
+			this.timer.start();
+
+			clockLabel.appendTo(headerContainer);
 		
 		var imageSources1=[
 		'http://imgc.allpostersimages.com/images/P-473-488-90/56/5663/7EGUG00Z/posters/lord-of-the-rings-1-the-fellowship-of-the-ring.jpg', //339x488
@@ -376,6 +508,7 @@ var MainView = new MAF.Class({
 
 	destroyView: function() {
 		delete this.animating;
+		delete this.timer;
 	}
 
 });
