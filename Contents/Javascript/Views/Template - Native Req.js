@@ -133,48 +133,21 @@ var Template = new MAF.Class({
 			},
 			events: {
 				onSelect: function() {
-					var statusText = view.createTextblock(100,780,1800,20,"",18,"white",view.elements.topContainer);
-					var statusText2 = view.createTextblock(100,800,1800,20,"",18,"white",view.elements.topContainer);
-					var statusText3 = view.createTextblock(100,820,1800,20,"",18,"white",view.elements.topContainer);
-					var statusText4 = view.createTextblock(100,840,1800,20,"",18,"white",view.elements.topContainer);
-					var statusText5 = view.createTextblock(100,860,1800,20,"",18,"white",view.elements.topContainer);
-					var statusText6 = view.createTextblock(100,880,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText = view.createTextblock(1000,900,900,100,"",18,"white",view.elements.topContainer);
+					var statusText2 = view.createTextblock(1200,900,900,100,"no data",18,"white",view.elements.topContainer);
+					var statusText3 = view.createTextblock(1200,920,900,100,"no data",18,"white",view.elements.topContainer);
 
-					var oauthRequest = new XMLHttpRequest();			
-					var token_endpoint_url = 'http://127.0.0.1:81/sa/oauth/token?grant_type=urn:eos:cpe:certificate&client_id=tvshop';	
-					
-					oauthRequest.open("POST",token_endpoint_url, true);
-					oauthRequest.onreadystatechange = function() {
-						
-						if (oauthRequest.status === 200) {
-							var tokenObject = oauthRequest.responseText;
-							var accessToken = view.accessToken = tokenObject.access_token;
-							statusText.setText(oauthRequest.responseText);
+					var doRequest = new MAF.Request({
+						url: 'http://127.0.0.1:81/sa/oauth/token?grant_type=urn:eos:cpe:certificate&client_id=tvshop',
+						method: 'POST',
+						proxy:false,
+						onSuccess: function (request,result) {
+							statusText.setText(request.status);
+							statusText2.setText(JSON.parse(request.response));
+							var tokens = JSON.parse(result);
+							statusText3.setText(tokens);
 						}
-
-						if (oauthRequest.readyState === 4 && oauthRequest.status === 200) {
-							//Who am I
-							var apiRequest = new XMLHttpRequest();
-							var api_gateway_url = 'http://whoami.cloud/whoami';
-							var headerToken = "bearer "+view.accessToken;
-							statusText2.setText(headerToken);
-							
-							apiRequest.open("POST", api_gateway_url, true);
-							apiRequest.setRequestHeader('Authorization', headerToken); //access_token here
-							apiRequest.onreadystatechange = function() { 
-								/* if (apiRequest.status === 200) {
-									statusText3.setText("readystate: " + apiRequest.readyState + " & request status: " + apiRequest.status);
-									var idObject = JSON.parse(apiRequest.responseText);
-									statusText4.setText(JSON.stringify(idObject));
-									statusText5.setText("You have customer ID <id here>");
-								} */
-								statusText5.setText("If Fired!");
-							}
-							//apiRequest.send();
-						}
-					};
-					oauthRequest.send();
-					apiRequest.send();	
+					}).send();
 					
 				},
 				onNavigate: function (event) {

@@ -1,4 +1,6 @@
+var module = {};
 // Include your views
+include("Javascript/Views/Template.js");
 include("Javascript/Views/PlayMoreView.js");
 include("Javascript/Views/PlayView.js");
 include("Javascript/Views/PlaySportsView.js");

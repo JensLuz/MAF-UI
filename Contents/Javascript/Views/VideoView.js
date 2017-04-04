@@ -14,56 +14,11 @@ var VideoView = new MAF.Class({
 	createView: function () {
 		// Reference to the current view
 		var view = this;
-
-		var directPlayButton = view.controls.directPlayButton = new MAF.control.TextButton({
-			label: $_('DirectPlay'),
-			guid: 'directPlayButton',
-			styles: {
-				height: 80,
-				width: 400,
-				hOffset: (view.width - 400) / 2,
-				vOffset: 150
-			},
-			textStyles: {
-				anchorStyle: 'center'
-			},
-			events: {
-				onSelect: function () {
-					// If the player is not playing, start the video and change the text on the button
-					if (MAF.mediaplayer.player.currentPlayerState !== MAF.mediaplayer.constants.states.PLAY){
-						// Add a new playlist with the video to the player
-						MAF.mediaplayer.playlist.set(new MAF.media.Playlist().addEntryByURL('https://www.youtube.com/watch?v=UJcu_Wl1uA4'));
-						// Start the video playback
-						MAF.mediaplayer.playlist.start();
-						this.setText($_('DirectStop'));
-					} else {
-						// If the player is playing, stop the video and change text on the button
-						MAF.mediaplayer.control.stop();
-						this.setText($_('DirectPlay'));
-					}
-				}
-			}
-		}).appendTo(view);
-
-		var mediaTransportOverlayButton = view.controls.mediaTransportOverlayButton = new MAF.control.TextButton({
-			label: $_('MediaTransportOverlay'),
-			guid: 'mediaTransportOverlayButton',
-			styles: {
-				height: 80,
-				width: 400,
-				hOffset: (view.width - 400) / 2,
-				vOffset: directPlayButton.outerHeight + 50
-			},
-			textStyles: {
-				anchorStyle: 'center'
-			},
-			events: {
-				onSelect: function () {
-					// Load the overlay view and start the playlist
-					MAF.application.loadView('view-transportOverlay');
-				}
-			}
-		}).appendTo(view);
+		YouTube.get('https://www.youtube.com/watch?v=3ZPTIn0jmzw', function(config) {
+			MAF.mediaplayer.playlist.set((new MAF.media.Playlist()).addEntry(new MAF.media.PlaylistEntry(config)));
+			MAF.mediaplayer.playlist.start();
+			playlist.onPlaylistEnd(MAF.application.loadView('view-PlayView', ""));
+		});
 	},
 
 	// When closing the application make sure you unreference your objects and arrays

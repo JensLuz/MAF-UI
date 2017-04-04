@@ -133,48 +133,53 @@ var Template = new MAF.Class({
 			},
 			events: {
 				onSelect: function() {
-					var statusText = view.createTextblock(100,780,1800,20,"",18,"white",view.elements.topContainer);
-					var statusText2 = view.createTextblock(100,800,1800,20,"",18,"white",view.elements.topContainer);
-					var statusText3 = view.createTextblock(100,820,1800,20,"",18,"white",view.elements.topContainer);
-					var statusText4 = view.createTextblock(100,840,1800,20,"",18,"white",view.elements.topContainer);
-					var statusText5 = view.createTextblock(100,860,1800,20,"",18,"white",view.elements.topContainer);
-					var statusText6 = view.createTextblock(100,880,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText = view.createTextblock(100,800,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText2 = view.createTextblock(100,820,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText3 = view.createTextblock(100,840,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText4 = view.createTextblock(100,860,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText5 = view.createTextblock(100,880,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText6 = view.createTextblock(100,900,1800,20,"",18,"white",view.elements.topContainer);
 
 					var oauthRequest = new XMLHttpRequest();			
 					var token_endpoint_url = 'http://127.0.0.1:81/sa/oauth/token?grant_type=urn:eos:cpe:certificate&client_id=tvshop';	
+					var i = 0;
+					var answer = [];
 					
 					oauthRequest.open("POST",token_endpoint_url, true);
 					oauthRequest.onreadystatechange = function() {
+						answer[oauthRequest.readyState]= oauthRequest.readyState + " - " + oauthRequest.responseText;
 						
-						if (oauthRequest.status === 200) {
-							var tokenObject = oauthRequest.responseText;
-							var accessToken = view.accessToken = tokenObject.access_token;
-							statusText.setText(oauthRequest.responseText);
-						}
-
-						if (oauthRequest.readyState === 4 && oauthRequest.status === 200) {
-							//Who am I
+						if (oauthRequest.readyState=== 4 && oauthRequest.status === 200) {
+							var tokenObject = JSON.parse(oauthRequest.responseText);
+							statusText.setText(tokenObject.access_token);
+							
+							
+							//var callResponse = oauthRequest.responseText;
+							//var tokenObject = JSON.parse(callResponse);
+							
+							
+							/* //Who am I
 							var apiRequest = new XMLHttpRequest();
 							var api_gateway_url = 'http://whoami.cloud/whoami';
-							var headerToken = "bearer "+view.accessToken;
-							statusText2.setText(headerToken);
+							apiRequest.setRequestHeader('Authorization', 'bearer ' + tokenObject.access_token); //access_token here
+							apiRequest.open("POST", api_gateway_url, false);
+							statusText.setText("Access token: "+tokenObject.access_token);
 							
-							apiRequest.open("POST", api_gateway_url, true);
-							apiRequest.setRequestHeader('Authorization', headerToken); //access_token here
 							apiRequest.onreadystatechange = function() { 
-								/* if (apiRequest.status === 200) {
-									statusText3.setText("readystate: " + apiRequest.readyState + " & request status: " + apiRequest.status);
-									var idObject = JSON.parse(apiRequest.responseText);
-									statusText4.setText(JSON.stringify(idObject));
-									statusText5.setText("You have customer ID <id here>");
-								} */
-								statusText5.setText("If Fired!");
+								statusText3.setText("readystate: " + apiRequest.readyState + " & request status: " + apiRequest.status);
+								if (apiRequest.readyState===4 && apiRequest.status === 200) {
+									statusText3.setText("You have customer ID " + apiRequest.responseText);
+								}
 							}
-							//apiRequest.send();
+							apiRequest.send(); */
 						}
 					};
 					oauthRequest.send();
-					apiRequest.send();	
+					statusText.setText(answer[0]);
+					statusText2.setText(answer[1]);
+					statusText3.setText(answer[2]);
+					statusText4.setText(answer[3]);
+					statusText5.setText(answer[4]);
 					
 				},
 				onNavigate: function (event) {
