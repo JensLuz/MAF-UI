@@ -133,6 +133,45 @@ var Template = new MAF.Class({
 			},
 			events: {
 				onSelect: function() {
+					var statusText = view.createTextblock(100,780,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText2 = view.createTextblock(100,800,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText3 = view.createTextblock(100,820,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText4 = view.createTextblock(100,840,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText5 = view.createTextblock(100,860,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText6 = view.createTextblock(100,880,1800,20,"",18,"white",view.elements.topContainer);
+					var accessToken = view.accessToken = 0;
+
+					var oauthRequest = new XMLHttpRequest();			
+					var token_endpoint_url = 'http://127.0.0.1:81/sa/oauth/token?grant_type=urn:eos:cpe:certificate&client_id=tvshop';	
+					
+					oauthRequest.open("POST",token_endpoint_url, true);
+					oauthRequest.onreadystatechange = function() {
+						
+						if (oauthRequest.readyState === 4 && oauthRequest.status === 200) {
+							var tokenObject = JSON.parse(oauthRequest.responseText);
+							view.accessToken = tokenObject.access_token;
+							statusText.setText(view.accessToken);
+							//Who am I
+							var apiRequest = new XMLHttpRequest();
+							var api_gateway_url = 'http://whoami.cloud/whoami';
+							var headerToken = "bearer "+view.accessToken;
+							statusText2.setText(headerToken);
+							
+							apiRequest.open("GET", api_gateway_url, true);
+							apiRequest.setRequestHeader('Authorization', headerToken);
+							apiRequest.responsType = 'json';
+							apiRequest.onreadystatechange = function() { 
+								if (apiRequest.readyState === 4 && apiRequest.status === 200) {
+									//var idObject = apiRequest.responseText;
+									var customerId = JSON.stringify(apiRequest.responseText);
+									statusText5.setText("You have customer ID "+ customerId);
+								}
+								statusText5.setText("State: " + apiRequest.readyState + " Status: " + apiRequest.status);
+							}
+							apiRequest.send();
+						}
+					};
+					oauthRequest.send();
 					
 				},
 				onNavigate: function (event) {

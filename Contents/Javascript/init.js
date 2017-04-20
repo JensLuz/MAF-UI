@@ -7,7 +7,11 @@ include("Javascript/Views/PlaySportsView.js");
 include("Javascript/Views/HomeView.js");
 include("Javascript/Views/VideoView.js");
 include("Javascript/Views/TransportOverlay.js");
-include("Javascript/Core/UIEngine.js");
+
+// Data URL to be used to fetch the news
+var token_endpoint_url = 'http://127.0.0.1:81/sa/oauth/token?grant_type=urn:eos:cpe:certificate&client_id=tvshop';
+//var token_endpoint_url = 'https://silentauth.cloud/oauth/token?grant_type=urn:eos:cpe:certificate&client_id=tvshop';
+var api_gateway_url = 'http://whoami.cloud/whoami';
 
 // Set base glow and focus theme
 Theme.set({

@@ -1,11 +1,11 @@
 {
 	"identifier": "com.telenet.app.UI",
 	"name": "UI Demo",
-	"version": "0.2.2",
+	"version": "0.2.5",
 	"author": "Jens Luz",
 	"company": "Telenet",
 	"copyright": "Telenet 2016",
-	"description": "Oauth resolving (Access Token & bearer header)",
+	"description": "SilentAuth parse firstName",
 	"categories": [
 		"featured",
 		"lifestyle"

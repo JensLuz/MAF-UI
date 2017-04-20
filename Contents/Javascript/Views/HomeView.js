@@ -25,6 +25,17 @@ var HomeView = new MAF.Class({
 				}
 			}).appendTo(view);
 			
+			
+			var statusText = view.createTextblock(10,780,1910,40,"",18,"white",view.elements.mainContainer);
+			var statusText2 = view.createTextblock(10,820,1910,40,"",18,"white",view.elements.mainContainer);
+			
+			var statusText4 = view.createTextblock(10,920,1910,40,"",18,"white",view.elements.mainContainer);
+			var accessToken;
+			var headerAuth = 0;
+			
+			var customerDataObject = view.getCustomerData();
+			statusText4.setText(customerDataObject);
+			
 			var  headerContainer = view.elements.headerContainer = new MAF.element.Container({
 			styles: {
 				width: 1920,
@@ -129,6 +140,7 @@ var HomeView = new MAF.Class({
 			];
 			this.elements.mainSlider.changeDataset(
 			productImages.map( function( e ) { return {title: e};}),true);
+
 		},
 
 		updateView: function () {
@@ -138,8 +150,101 @@ var HomeView = new MAF.Class({
 		destroyView: function () {
 			delete this.animating;
 			delete this.timer;
-		},	
+		},
+		
+		getTokens: function (callback) {
+			var view = this;
+			var oauthRequest = new XMLHttpRequest();
+			var token_endpoint_url = 'http://127.0.0.1:81/sa/oauth/token?grant_type=urn:eos:cpe:certificate&client_id=tvshop';
+			var err;
 
+			oauthRequest.open("POST", token_endpoint_url, true);
+			oauthRequest.onreadystatechange = function () {
+
+				if (oauthRequest.readyState === 4 && oauthRequest.status === 200) {
+					err = 0;
+					callback(err, oauthRequest.responseText);
+					//return token;
+					return oauthRequest.responseText;
+				} else {
+					token = "fail";
+					err = 1;
+					callback(err);
+				}
+			};
+			oauthRequest.send();
+		},
+		
+		getData: function (tokens, callback) {
+			var view = this;
+			var apiRequest = new XMLHttpRequest();
+			var api_gateway_url = 'http://whoami.cloud/whoami';
+			var err2;
+			
+			tokenObject = JSON.parse(tokens);
+			accessToken = tokenObject.access_token;
+
+			apiRequest.open("GET", api_gateway_url, false);
+			apiRequest.setRequestHeader('Authorization', 'bearer ' + accessToken);
+			apiRequest.onreadystatechange = function () {
+				
+				if (apiRequest.readyState === 4 && apiRequest.status === 200) {
+					err2 = 0;
+					callback(err2, apiRequest.responseText);
+					return apiRequest.responseText;
+				} else {
+					err2 = 1;
+					callback(err2);
+				}
+			};
+			apiRequest.send();
+		},
+		
+		getCustomerData: function () {
+			var view = this;
+			var statusText3 = view.createTextblock(10,820,1910,40,"",18,"white",view.elements.mainContainer);
+			var statusText4 = view.createTextblock(10,840,1910,40,"",18,"white",view.elements.mainContainer);
+			var tokens = view.getTokens(function(err, data){
+				if (err == 0){
+					statusText3.setText("Tokens retrieved");
+					var customerData = view.getData(data,function(err, data2){
+						if (err == 0){
+						statusText3.setText("Customer data retrieved");
+						statusText4.setText(data2);
+						
+						var statusText5 = view.createTextblock(10,880,1910,40,"",18,"white",view.elements.mainContainer);
+						//dataObject = JSON.parse(data2);
+						statusText5.setText(data2.firstName);
+						
+						return data2;
+						} else statusText3.setText("Customer data not available");
+					});
+					return customerData;
+				} else statusText3.setText("Tokens not available");
+			});		
+		},
+		
+		//Textblock creator
+		createTextblock: function(posx,posy,w,h,text,fontsize,clr,container) {
+			var textBlock = new MAF.element.Text({
+				label: $_(text),
+				styles: {
+					color: clr,
+					fontSize: fontsize,
+					//backgroundColor: 'black',
+					trucanion: 'end',
+					wrap: true,
+					width: w,
+					height: h,
+					hOffset: posx,
+					vOffset: posy
+				},
+				textStyles: {
+					anchorStyle: 'center'
+				}
+			}).appendTo(container);
+		return textBlock;
+		},
 
 		// Creates the Carousel and returns it as var
 		createCarousel: function (posx, posy, width, height, container) {

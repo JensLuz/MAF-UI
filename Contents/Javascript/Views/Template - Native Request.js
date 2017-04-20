@@ -1,6 +1,13 @@
 var Template = new MAF.Class({
 	ClassName: 'Template',
 	Extends: MAF.system.FullscreenView,
+	
+	initialize: function () {
+		var view = this;
+		view.parent();
+		// Register MAF messages listener to view.dataHasChanged
+		view.registerMessageCenterListenerCallback(view.dataHasChanged);
+	},
 
 	createView: function () {
 		var view = this;
@@ -133,7 +140,17 @@ var Template = new MAF.Class({
 			},
 			events: {
 				onSelect: function() {
+					var statusText = view.statusText = view.createTextblock(100,780,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText2 = view.statusText2 = view.createTextblock(100,800,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText3 = view.statusText3 = view.createTextblock(100,820,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText4 = view.statusText4 = view.createTextblock(100,840,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText5 = view.statusText5 = view.createTextblock(100,860,1800,20,"",18,"white",view.elements.topContainer);
+					var statusText6 = view.statusText6 = view.createTextblock(100,880,1800,20,"",18,"white",view.elements.topContainer);
+					var accessToken = view.accessToken = 0;
+
+					view.getTokens();
 					
+										
 				},
 				onNavigate: function (event) {
 					event.stop();
@@ -269,6 +286,67 @@ var Template = new MAF.Class({
 				transform: 'translateZ(0)'
 				}
 		}).appendTo(bigContainer);
+	},
+	
+	getTokens: function () {
+		var view = this;
+		// Trigger load indicator
+		MAF.utility.WaitIndicator.up();
+		new Request({
+			url: 'http://127.0.0.1:81/sa/oauth/token?grant_type=urn:eos:cpe:certificate&client_id=tvshop',
+			method: 'POST',
+			proxy: false,
+			onSuccess: function(request) {
+				// Store data via message to signal the views that have a registerMessageCenterListenerCallback on the view
+				//MAF.messages.store(datakey, request.responseText || "no data");
+				// Unset load indicator
+				view.statusText2.setText("Request Status: " + request.status);
+				view.statusText3.setText("Request Result: " + request.result);
+				view.tokens = JSON.parse(request.responseText);
+				MAF.utility.WaitIndicator.down();
+				
+				view.statusText4.setText(view.tokens);
+			},
+			onError: function(request) {
+				view.statusText3.setText("Error: "+ error);
+			},
+			onFailure: function(request) {
+				view.statusText3.setText("Failed");
+			},
+			onTimeout: function(request) {
+				view.statusText3.setText("Time Out");
+			}
+		}).send();
+	},
+	
+	getCustomerData: function (url, datakey) {
+		var view = this;
+		// Trigger load indicator
+		MAF.utility.WaitIndicator.up();
+		new Request({
+			url: url,
+			proxy: {
+				json: true // Convert XML into JSON via proxy
+			},
+			headers: {
+				//'Authorization' : 'bearer ' + ;
+			},
+			onSuccess: function(json) {
+				var data = json && json.rss && json.rss.channel || {};
+				// Store data via message to signal the views that have a registerMessageCenterListenerCallback on the view
+				MAF.messages.store(datakey, data.item || []);
+				// Unset load indicator
+				MAF.utility.WaitIndicator.down();
+			}
+		}).send();
+	},
+	
+	// Create your dataHasChanged function
+	dataHasChanged: function (event) {
+		var view = this;
+		if (event.payload.key === 'Tokens') {
+			view.statusText.setText(event.payload.value);
+		}
 	},
 
 	moveContainers: function(direction, focusItem) {
